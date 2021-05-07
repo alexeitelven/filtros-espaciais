@@ -63,6 +63,7 @@ def main():
             sg.Button("Carregar Imagem"),
         ],
         [
+            sg.Text("Filtros Espaciais"),
             sg.Button("Filtro de média"),
             sg.Button("Filtro Gaussiano"),
             sg.Button("Filtro de mediana"),
@@ -70,6 +71,14 @@ def main():
             sg.Button("Filtro de Sobel Y"),
             sg.Button("Filtro de Laplacitano"),
             sg.Button("Filtro de Canny"),
+        ],
+        [
+            sg.Text("Transformações Geometricas"),
+            sg.Button("Ajuste Escala"),
+            sg.Button("Perspectiva"),
+            sg.Button("Rotacao"),
+            sg.Button("Espelhamento"),
+            sg.Button("Translação"),
         ],
         [
             sg.Image(key="-imgOriginal-"),
@@ -97,6 +106,7 @@ def main():
                 image.save(bio, format="PNG")
                 window["-imgOriginal-"].update(data=bio.getvalue())
         
+        # -- FILTROS ESPACIAIS
         if event == "Filtro de média":
             img = cv2.imread(values["Arquivo"])   
             imgGaussiano=cv2.blur(img, (3,3)) #Esse é o Filtro de média?
@@ -138,6 +148,16 @@ def main():
             imgCanny=cv2.Canny(img,100,200)
             bio = atualizaImagem(imgCanny)
             window["-imgEditada-"].update(data=bio.getvalue())
+       
+        # -- FILTROS GEOMETRICOS    
+        
+           #     sg.Button("Ajuste Escala"),
+          #  sg.Button("Perspectiva"),
+           # sg.Button("Rotacao"),
+         #   sg.Button("Espelhamento"),
+          #  sg.Button("Translação"),
+        
+        
             
             
     window.close()
