@@ -77,17 +77,28 @@ def main():
             
         ],
         [
-            sg.Text("Transformações Geometricas"),
-            sg.Text('Escala',size=(5,0)), sg.Input(size=(5,0),key="keyEscala"),
-            sg.Button("Ajuste Escala"),
-            
-            sg.Button("Perspectiva"),
-            sg.Text('Rotação',size=(6,0)), sg.Input(size=(5,0),key="keyRotacao"),
-            sg.Button("Rotação"),
-            sg.Button("Translação"),
+         sg.Text("Transformações Geometricas"),
         ],
-          [
+        [    
+            sg.Button("Perspectiva"),
+            sg.Button("Translação"),
+       
+        ],
+        [
+           
+            sg.Text('Escala',size=(6,0)), sg.Input(size=(5,0),key="keyEscala"),
+            sg.Button("Ajuste Escala",size=(10,0)),
+        ],
+       
+        [    
+            sg.Text('Rotacao',size=(6,0)), sg.Input(size=(5,0),key="keyRotacao"),
+            sg.Button("Rotacao",size=(10,0)),
+            
+        ],
+        [
             sg.Text("Espelhamento"),  
+        ],
+        [ 
             sg.Button("Flip Horizontal"),
             sg.Button("Flip Vertical"),
             sg.Button("Flip Horizontal e Vertical"),
@@ -182,7 +193,7 @@ def main():
             bio = atualizaImagem(imgPerspectiva)
             window["-imgEditada-"].update(data=bio.getvalue())
        
-        if event == "Rotação": 
+        if event == "Rotacao":             
             img = cv2.imread(values["Arquivo"])   
             totallinhas, totalcolunas = img.shape[:2]
             matriz=cv2.getRotationMatrix2D((totallinhas/2, totalcolunas/2),float(values["keyRotacao"]),1)
