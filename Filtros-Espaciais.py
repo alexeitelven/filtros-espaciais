@@ -64,20 +64,26 @@ def main():
             sg.Button("Carregar Imagem"),
         ],
         [
+        
             sg.Text("Filtros Espaciais"),
             sg.Button("Filtro de média"),
             sg.Button("Filtro Gaussiano"),
-            sg.Button("Filtro de mediana"),
+            sg.Button("Filtro de mediana"), 
+         
             sg.Button("Filtro de Sobel X"),
             sg.Button("Filtro de Sobel Y"),
             sg.Button("Filtro de Laplacitano"),
             sg.Button("Filtro de Canny"),
+            
         ],
         [
             sg.Text("Transformações Geometricas"),
+            sg.Text('Escala',size=(5,0)), sg.Input(size=(5,0),key="keyEscala"),
             sg.Button("Ajuste Escala"),
+            
             sg.Button("Perspectiva"),
-            sg.Button("Rotacao"),
+            sg.Text('Rotação',size=(6,0)), sg.Input(size=(5,0),key="keyRotacao"),
+            sg.Button("Rotação"),
             sg.Button("Translação"),
         ],
           [
@@ -107,7 +113,7 @@ def main():
             filename = values["Arquivo"]
             if os.path.exists(filename):
                 image = Image.open(values["Arquivo"])
-                image.thumbnail((larguraTela/2, alturaTela/2))
+                image.thumbnail((larguraTela, alturaTela))
                 bio = io.BytesIO()
                 image.save(bio, format="PNG")
                 window["-imgOriginal-"].update(data=bio.getvalue())
@@ -159,11 +165,14 @@ def main():
        
         if event == "Ajuste Escala": 
             img = cv2.imread(values["Arquivo"])   
-            imgEscala=cv2.resize(img, None, fx=1.5,fy=1.5, 
+            
+            #fxV= float(values["keyEscala"])
+            imgEscala=cv2.resize(img, None, fx=float(values["keyEscala"]),fy=float(values["keyEscala"]), 
                            interpolation = cv2.INTER_CUBIC)
             bio = atualizaImagem(imgEscala)
             window["-imgEditada-"].update(data=bio.getvalue())
          
+        
         if event == "Perspectiva": 
             img = cv2.imread(values["Arquivo"])   
             pontosiniciais=np.float32([[189,87],[459,84],[192,373],[484,372]])
@@ -173,10 +182,10 @@ def main():
             bio = atualizaImagem(imgPerspectiva)
             window["-imgEditada-"].update(data=bio.getvalue())
        
-        if event == "Rotacao": 
+        if event == "Rotação": 
             img = cv2.imread(values["Arquivo"])   
             totallinhas, totalcolunas = img.shape[:2]
-            matriz=cv2.getRotationMatrix2D((totallinhas/2, totalcolunas/2),23,1)
+            matriz=cv2.getRotationMatrix2D((totallinhas/2, totalcolunas/2),float(values["keyRotacao"]),1)
             iimagemRotacionada = cv2.warpAffine(img, matriz, (totallinhas, totalcolunas))
             bio = atualizaImagem(iimagemRotacionada)
             window["-imgEditada-"].update(data=bio.getvalue())
@@ -207,9 +216,7 @@ def main():
             bio = atualizaImagem(flipVertHori)
             window["-imgEditada-"].update(data=bio.getvalue())
 
-        
-        
-
+    
         
             
             
