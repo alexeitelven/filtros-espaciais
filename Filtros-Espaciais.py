@@ -29,6 +29,7 @@ import PySimpleGUI as sg
 from PIL import Image
 import cv2 as cv2
 from win32api import GetSystemMetrics
+import numpy as np
 
 
 #print("Width =", GetSystemMetrics(0))
@@ -45,7 +46,7 @@ def atualizaImagem(imagem):
     #Cria uma imagem temporária para mostrar a imagem editada na tela do programa
     cv2.imwrite("temp.png",imagem) 
     image = Image.open("temp.png")
-    image.thumbnail((larguraTela/2, alturaTela/2)) 
+    image.thumbnail((larguraTela, alturaTela)) 
     bio = io.BytesIO()
     image.save(bio, format="PNG") 
     return bio
@@ -77,8 +78,13 @@ def main():
             sg.Button("Ajuste Escala"),
             sg.Button("Perspectiva"),
             sg.Button("Rotacao"),
-            sg.Button("Espelhamento"),
             sg.Button("Translação"),
+        ],
+          [
+            sg.Text("Espelhamento"),  
+            sg.Button("Flip Horizontal"),
+            sg.Button("Flip Vertical"),
+            sg.Button("Flip Horizontal e Vertical"),
         ],
         [
             sg.Image(key="-imgOriginal-"),
@@ -105,7 +111,7 @@ def main():
                 bio = io.BytesIO()
                 image.save(bio, format="PNG")
                 window["-imgOriginal-"].update(data=bio.getvalue())
-        
+                window["-imgEditada-"].update(data=bio.getvalue())
         # -- FILTROS ESPACIAIS
         if event == "Filtro de média":
             img = cv2.imread(values["Arquivo"])   
@@ -150,13 +156,60 @@ def main():
             window["-imgEditada-"].update(data=bio.getvalue())
        
         # -- FILTROS GEOMETRICOS    
+       
+        if event == "Ajuste Escala": 
+            img = cv2.imread(values["Arquivo"])   
+            imgEscala=cv2.resize(img, None, fx=1.5,fy=1.5, 
+                           interpolation = cv2.INTER_CUBIC)
+            bio = atualizaImagem(imgEscala)
+            window["-imgEditada-"].update(data=bio.getvalue())
+         
+        if event == "Perspectiva": 
+            img = cv2.imread(values["Arquivo"])   
+            pontosiniciais=np.float32([[189,87],[459,84],[192,373],[484,372]])
+            pontofinais=np.float32([[0,0],[500,0],[0,500],[500,500]])
+            matriz=cv2.getPerspectiveTransform(pontosiniciais,pontofinais)
+            imgPerspectiva = cv2.warpPerspective(img, matriz,(500,500))
+            bio = atualizaImagem(imgPerspectiva)
+            window["-imgEditada-"].update(data=bio.getvalue())
+       
+        if event == "Rotacao": 
+            img = cv2.imread(values["Arquivo"])   
+            totallinhas, totalcolunas = img.shape[:2]
+            matriz=cv2.getRotationMatrix2D((totallinhas/2, totalcolunas/2),23,1)
+            iimagemRotacionada = cv2.warpAffine(img, matriz, (totallinhas, totalcolunas))
+            bio = atualizaImagem(iimagemRotacionada)
+            window["-imgEditada-"].update(data=bio.getvalue())
+       
+        if event == "Translação": 
+            img = cv2.imread(values["Arquivo"])   
+            linhas, colunas = img.shape[:2]
+            matriz=np.float32([[1,0,400],[0,1,400]])
+            imgDeslocada=cv2.warpAffine(img, matriz,(linhas,colunas))
+            bio = atualizaImagem(imgDeslocada)
+            window["-imgEditada-"].update(data=bio.getvalue())
+       
+        if event == "Flip Horizontal": 
+            img = cv2.imread(values["Arquivo"])   
+            flipHoriz=cv2.flip(img,1)
+            bio = atualizaImagem(flipHoriz)
+            window["-imgEditada-"].update(data=bio.getvalue())
+       
+        if event == "Flip Vertical": 
+            img = cv2.imread(values["Arquivo"])   
+            flipVertical=cv2.flip(img,0)
+            bio = atualizaImagem(flipVertical)
+            window["-imgEditada-"].update(data=bio.getvalue())
+       
+        if event == "Flip Horizontal e Vertical": 
+            img = cv2.imread(values["Arquivo"])   
+            flipVertHori=cv2.flip(img,-1)
+            bio = atualizaImagem(flipVertHori)
+            window["-imgEditada-"].update(data=bio.getvalue())
+
         
-           #     sg.Button("Ajuste Escala"),
-          #  sg.Button("Perspectiva"),
-           # sg.Button("Rotacao"),
-         #   sg.Button("Espelhamento"),
-          #  sg.Button("Translação"),
         
+
         
             
             
